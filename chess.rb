@@ -80,16 +80,16 @@ class Game
     end
   end
 
-  def get_player_move
-    while []
-      board.render
-
-      ret = handle_input(get_char)
-      break if ret.is_a?(Array)
-    end
-
-
-  end
+  # def get_player_move
+  #   while []
+  #     board.render
+  #
+  #     ret = handle_input(get_char)
+  #     break if ret.is_a?(Array)
+  #   end
+  #
+  #
+  # end
 
   def click
     cursor.coordinates

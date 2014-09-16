@@ -85,7 +85,8 @@ class SteppingPiece < Piece
 end
 
 class Pawn < Piece
-  #UGH
+  def get_lines(position)
+  end
 end
 
 class Rook < SlidingPiece

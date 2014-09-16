@@ -5,57 +5,15 @@ require_relative 'pieces'
 class Board
 
   attr_accessor :board
-  attr_reader :cursor, :touched_piece, :touched_coordinates
+  attr_reader :cursor, :touched_piece, :touched_coordinates,
+              :touched_piece_moves
 
   def initialize
-    @board = Board.new_board
+    @board = self.new_board
     self.populate_board
 
     self.initialize_moves
-  end
-
-  def initialize_moves
-    8.times do |x|
-      8.times do |y|
-        pos = [x, y]
-        piece = @self[[x, y]]
-        piece.calculate_moves([x, y])
-      end
-    end
-  end
-
-  def self.new_board
-    Array.new(8) { Array.new(8) }
-  end
-
-  def populate_board
-    self.board[0] = populate_royal_court(:black)
-    self.board[1] = populate_pawns(:black)
-    self.board[6] = populate_pawns(:white)
-    self.board[7] = populate_royal_court(:white)
-  end
-
-  def initialize
-    @board = Board.new_board
-    self.populate_board
-  end
-
-  def inspect
-    "A board."
-  end
-
-  def populate_royal_court(color)
-    [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook].map do |piece|
-      piece.new(color)
-    end
-  end
-
-  def populate_pawns(color)
-    pawns = []
-    8.times do
-      pawns << Pawn.new(color)
-    end
-    pawns
+    @touched_piece_moves = []
   end
 
   def render(cursor_coords)
@@ -82,6 +40,12 @@ class Board
   def format_char(char, pos, cursor_coords)
     if pos == cursor_coords
       char.bg_cyan
+    elsif touched_piece
+      if touched_piece_moves.include?(pos) && touched_piece.color != self[pos].color #fix this fug mess
+        char.bg_red
+      elsif touched_piece_moves.include?(pos)
+        char.bg_green
+      end
     elsif pos.reduce(:+).odd?
       char.bg_gray
     else
@@ -89,15 +53,32 @@ class Board
     end
   end
 
-  def clear_screen
-    system('clear')
+  def valid_move?(from_coordinates, to_coordinates)
+
   end
 
-  def each_piece(&prc)
-    self.board.flatten.compact.each(&prc)
+  def valid_moves(piece)
+    #piece.moves
   end
 
+  def touch_piece_at(coordinates)
+    piece = self[coordinates]
+    puts 'touching piece now!'
+    @touched_piece = piece
+    @touched_coordinates = coordinates
+    @touched_piece_moves = piece.moves
+  end
 
+  def place_at(coordinates)
+    # Check for validity
+    puts 'placing piece!'
+
+    self[coordinates] = touched_piece
+    self[touched_coordinates] = nil
+
+    @touched_piece_moves = []
+    @touched_piece = nil
+  end
 
   def [](coords)
     row, col = coords
@@ -109,50 +90,14 @@ class Board
     board[row][col] = piece
   end
 
-  def coordinates_of(symbol)
-    char, number = symbol.to_s.split('')
-
-    number = 8 - Integer(number)
-    char = char.ord - 'a'.ord
-
-    [number, char]
-  end
-
-  def symbol_of(coords)
-    row, col = coords
-    row = 8 - row
-    col = ('a'.ord + col).chr
-    (col + row.to_s).to_sym
-  end
-
-  def valid_move?(from_coordinates, to_coordinates)
-
-  end
-
-  def valid_moves(piece)
-    #piece.moves
-
-  end
-
-  # def move(from_coordinates, to_coordinates)
-  #
-  #   # if self[from_coordinates]
-  #
-  # end
-
-  def touch_piece_at(coordinates)
-    piece = self[coordinates]
-    puts 'touching piece now!'
-    @touched_piece = piece
-    @touched_coordinates = coordinates
-  end
-
-  def place_at(coordinates)
-    # Check for validity
-    puts 'placing piece!'
-
-    self[coordinates] = touched_piece
-    self[touched_coordinates] = nil
+  def initialize_moves
+    8.times do |x|
+      8.times do |y|
+        pos = [x, y]
+        piece = self[[x, y]]
+        piece.calculate_moves([x, y]) if piece
+      end
+    end
   end
 
   def piece_color_at(coordinates)
@@ -162,6 +107,60 @@ class Board
 
     piece.color
   end
+
+  def inspect
+    "A board."
+  end
+
+  def each_piece(&prc)
+    self.board.flatten.compact.each(&prc)
+  end                 #DELETE ME??
+
+  def new_board
+    Array.new(8) { Array.new(8) }
+  end
+
+  def populate_board
+    self.board[0] = populate_royal_court(:black)
+    self.board[1] = populate_pawns(:black)
+    self.board[6] = populate_pawns(:white)
+    self.board[7] = populate_royal_court(:white)
+  end
+
+  def populate_royal_court(color)
+    [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook].map do |piece|
+      piece.new(color)
+    end
+  end
+
+  def populate_pawns(color)
+    pawns = []
+    8.times do
+      pawns << Pawn.new(color)
+    end
+    pawns
+  end
+
+  def symbol_of(coords)
+    row, col = coords
+    row = 8 - row
+    col = ('a'.ord + col).chr
+    (col + row.to_s).to_sym
+  end                 #DELETE ME???
+
+  def coordinates_of(symbol)
+    char, number = symbol.to_s.split('')
+
+    number = 8 - Integer(number)
+    char = char.ord - 'a'.ord
+
+    [number, char]
+  end            #DELETE ME TOO???
+
+  def clear_screen
+    system('clear')
+  end
+
 end
 
 class String
