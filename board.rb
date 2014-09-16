@@ -5,7 +5,24 @@ require_relative 'pieces'
 class Board
 
   attr_accessor :board
-  attr_reader :cursor
+  attr_reader :cursor, :touched_piece, :touched_coordinates
+
+  def initialize
+    @board = Board.new_board
+    self.populate_board
+
+    self.initialize_moves
+  end
+
+  def initialize_moves
+    8.times do |x|
+      8.times do |y|
+        pos = [x, y]
+        piece = @self[[x, y]]
+        piece.calculate_moves([x, y])
+      end
+    end
+  end
 
   def self.new_board
     Array.new(8) { Array.new(8) }
@@ -43,6 +60,8 @@ class Board
 
   def render(cursor_coords)
 
+    clear_screen
+
     rows = []
     8.times do |row|
 
@@ -57,7 +76,7 @@ class Board
 
       rows << cols.join('')
     end
-    rows.join("\n")
+    puts rows.join("\n")
   end
 
   def format_char(char, pos, cursor_coords)
@@ -70,9 +89,24 @@ class Board
     end
   end
 
+  def clear_screen
+    system('clear')
+  end
+
+  def each_piece(&prc)
+    self.board.flatten.compact.each(&prc)
+  end
+
+
+
   def [](coords)
     row, col = coords
     board[row][col]
+  end
+
+  def []=(coords, piece)
+    row, col = coords
+    board[row][col] = piece
   end
 
   def coordinates_of(symbol)
@@ -91,6 +125,43 @@ class Board
     (col + row.to_s).to_sym
   end
 
+  def valid_move?(from_coordinates, to_coordinates)
+
+  end
+
+  def valid_moves(piece)
+    #piece.moves
+
+  end
+
+  # def move(from_coordinates, to_coordinates)
+  #
+  #   # if self[from_coordinates]
+  #
+  # end
+
+  def touch_piece_at(coordinates)
+    piece = self[coordinates]
+    puts 'touching piece now!'
+    @touched_piece = piece
+    @touched_coordinates = coordinates
+  end
+
+  def place_at(coordinates)
+    # Check for validity
+    puts 'placing piece!'
+
+    self[coordinates] = touched_piece
+    self[touched_coordinates] = nil
+  end
+
+  def piece_color_at(coordinates)
+    piece = self[coordinates]
+
+    return nil unless piece
+
+    piece.color
+  end
 end
 
 class String

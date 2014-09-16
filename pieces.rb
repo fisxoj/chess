@@ -19,7 +19,7 @@ class Piece
       :knight => '♞'}
       }
 
-  attr_reader :display_character
+  attr_reader :display_character, :deltas, :moves, :color
 
   def initialize(color)
     @color = color
@@ -34,10 +34,8 @@ class Piece
     PIECE_CHARACTERS[color][self.class.to_s.downcase.to_sym]
   end
 
-  attr_reader :deltas
-
-  def moves(position)
-    [self.get_lines(position), self.get_captures(position)]
+  def calculate_moves(position)
+    @moves = [self.get_lines(position), self.get_captures(position)]
   end
 
   def get_captures(position)
@@ -47,6 +45,10 @@ class Piece
   def valid_position?(pos)
     pos.all? { |num| num.between?(0, 7) }
   end
+
+  def owned_by?(test_color)
+    self.color == test_color
+  end
 end
 
 class SlidingPiece < Piece
@@ -54,7 +56,6 @@ class SlidingPiece < Piece
     x, y = position
 
     lines = []
-    puts self.deltas
     self.deltas.each do |dx, dy|
       one_line = []
 
@@ -106,14 +107,14 @@ class King < SteppingPiece
   end
 end
 
-class Queen < SteppingPiece
+class Queen < SlidingPiece
   def deltas
     [[1, 1], [-1, -1], [1, -1], [-1, 1],
      [1, 0], [0, 1], [-1, 0], [0, -1]]
   end
 end
 
-class Knight < Piece
+class Knight < SteppingPiece
   def deltas
     [[1, 2], [1, -2], [-1, 2], [-1, -2],
      [2, 1], [2, -1], [-2, 1], [-2, -1]]
