@@ -23,6 +23,10 @@ class Board
     self.populate_board
   end
 
+  def inspect
+    "A board."
+  end
+
   def populate_royal_court(color)
     [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook].map do |piece|
       piece.new(color)
