@@ -35,15 +35,16 @@ class Board
       rows << cols.join('')
     end
     puts rows.join("\n")
+    #puts touched_piece
   end
 
   def format_char(char, pos, cursor_coords)
     if pos == cursor_coords
       char.bg_cyan
-    elsif touched_piece
-      if touched_piece_moves.include?(pos) && touched_piece.color != self[pos].color #fix this fug mess
+    elsif touched_piece && touched_piece_moves[:lines].flatten(1).include?(pos)  #fix this fug mess
+      if self[pos] && !touched_piece.same_color_as?(self[pos])
         char.bg_red
-      elsif touched_piece_moves.include?(pos)
+      else
         char.bg_green
       end
     elsif pos.reduce(:+).odd?
@@ -53,29 +54,64 @@ class Board
     end
   end
 
-  def valid_move?(from_coordinates, to_coordinates)
-
+  def teammate_at?(piece, coordinates)
+   # p coordinates
+    self[coordinates] && self[coordinates].color == piece.color
   end
 
-  def valid_moves(piece)
-    #piece.moves
+  def opponent_at?(piece, coordinates)
+    self[coordinates] && self[coordinates].color != piece.color
   end
+
+  # def stepping_on_teammate?(from_coordinates, to_coordinates)
+#     self[from_coordinates].same_color_as?(self[to_coordinates])
+#   rescue NoMethodError
+#     false
+#   end
+#
+#   def stepping_on_opponent?(from_coordinates, to_coordinates)
+#     !self[from_coordinates].same_color_as?(self[to_coordinates])
+#   rescue NoMethodError
+#     false
+#   end
+#
+#   def valid_moves(piece)
+#     piece.moves[:lines].map do |line|
+#       stop = false
+#       p line
+#       line.take_while do |coords|
+#         break if stop
+#
+#         p coords
+#         other_piece = self[coords]
+#
+#         return true unless other_piece
+#
+#         if piece.same_color_as?(self[coords]) #stepping_on_teammate?
+#           false
+#         else
+#           stop = true
+#           true
+#         end
+#
+#       end
+#     end
+#   end
 
   def touch_piece_at(coordinates)
     piece = self[coordinates]
-    puts 'touching piece now!'
+
     @touched_piece = piece
     @touched_coordinates = coordinates
-    @touched_piece_moves = piece.moves
+    @touched_piece_moves = piece.moves ##fix
   end
 
   def place_at(coordinates)
     # Check for validity
-    puts 'placing piece!'
 
     self[coordinates] = touched_piece
     self[touched_coordinates] = nil
-
+    touched_piece.calculate_moves(coordinates)
     @touched_piece_moves = []
     @touched_piece = nil
   end
@@ -129,14 +165,14 @@ class Board
 
   def populate_royal_court(color)
     [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook].map do |piece|
-      piece.new(color)
+      piece.new(color, self)
     end
   end
 
   def populate_pawns(color)
     pawns = []
     8.times do
-      pawns << Pawn.new(color)
+      pawns << Pawn.new(color, self)
     end
     pawns
   end

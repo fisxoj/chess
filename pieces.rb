@@ -19,9 +19,10 @@ class Piece
       :knight => '♞'}
       }
 
-  attr_reader :display_character, :deltas, :moves, :color
+  attr_reader :display_character, :deltas, :moves, :color, :board
 
-  def initialize(color)
+  def initialize(color, board)
+    @board = board
     @color = color
     @display_character = self.character(color)
   end
@@ -35,19 +36,25 @@ class Piece
   end
 
   def calculate_moves(position)
-    @moves = [self.get_lines(position), self.get_captures(position)]
+    @moves = { :lines => self.get_lines(position),
+               :captures => self.get_captures(position) }
   end
 
   def get_captures(position)
     []
   end
 
-  def valid_position?(pos)
+  def on_board?(pos)
     pos.all? { |num| num.between?(0, 7) }
   end
 
   def owned_by?(test_color)
     self.color == test_color
+  end
+
+  def same_color_as?(other_piece)
+    return false unless other_piece
+    self.color == other_piece.color
   end
 end
 
@@ -62,12 +69,15 @@ class SlidingPiece < Piece
       7.times do |i|
         pos = [x + (i + 1) * dx, y + (i + 1) * dy]
 
-        break unless valid_position?(pos)
+        break if !on_board?(pos) || board.teammate_at?(self, pos)
 
         one_line << pos
+        # break if it was their guy
+        break if board.opponent_at?(self, pos)
       end
 
       lines << one_line
+
     end
 
     lines
@@ -77,15 +87,21 @@ end
 class SteppingPiece < Piece
   def get_lines(position)
     x, y = position
+    lines = []
 
-    deltas.map do |dx, dy|
-      [x + dx, y + dy]
+    deltas.each do |dx, dy|
+      pos = [x + dx, y + dy]
+
+      lines << [pos] if on_board?(pos) && !board.teammate_at?(self, pos)
     end
+
+    lines
   end
 end
 
 class Pawn < Piece
   def get_lines(position)
+    []
   end
 end
 
