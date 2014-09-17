@@ -109,7 +109,11 @@ class Pawn < Piece
   def get_lines(position)
     row, col = position
     dir = (self.color == :white ? -1 : 1)
-    moves = [[row + dir, col]]
+    moves = []
+
+    # Disallow forward captures
+    single_hop = [row + dir, col]
+    moves << single_hop unless board.anyone_at(single_hop)
 
     # Allow diagonal captures
     capture1 = [row + dir, col + dir]
