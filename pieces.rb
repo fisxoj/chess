@@ -19,15 +19,22 @@ class Piece
       :knight => '♞'}
       }
 
-  attr_reader :display_character, :deltas, :moves, :color, :board
+  attr_reader :display_character, :deltas,
+              :color, :board
+  attr_accessor :first_move
 
   def initialize(color, board)
     @board = board
     @color = color
     @display_character = self.character(color)
+    @first_move = true
   end
 
   def to_s
+    @display_character
+  end
+
+  def inspect
     @display_character
   end
 
@@ -35,9 +42,8 @@ class Piece
     PIECE_CHARACTERS[color][self.class.to_s.downcase.to_sym]
   end
 
-  def calculate_moves(position)
-    @moves = { :lines => self.get_lines(position),
-               :captures => self.get_captures(position) }
+  def moves(position)
+    self.get_lines(position)
   end
 
   def get_captures(position)
@@ -71,12 +77,12 @@ class SlidingPiece < Piece
 
         break if !on_board?(pos) || board.teammate_at?(self, pos)
 
-        one_line << pos
+        lines << pos
         # break if it was their guy
         break if board.opponent_at?(self, pos)
       end
 
-      lines << one_line
+      # lines << one_line
 
     end
 
@@ -92,7 +98,7 @@ class SteppingPiece < Piece
     deltas.each do |dx, dy|
       pos = [x + dx, y + dy]
 
-      lines << [pos] if on_board?(pos) && !board.teammate_at?(self, pos)
+      lines << pos if on_board?(pos) && !board.teammate_at?(self, pos)
     end
 
     lines
@@ -101,7 +107,22 @@ end
 
 class Pawn < Piece
   def get_lines(position)
-    []
+    row, col = position
+    dir = (self.color == :white ? -1 : 1)
+    moves = [[row + dir, col]]
+
+    # Allow diagonal captures
+    capture1 = [row + dir, col + dir]
+    p board.opponent_at?(self, capture1)
+    moves << capture1 if board.opponent_at?(self, capture1)
+
+    capture2 = [row + dir, col - dir]
+    moves << capture2 if board.opponent_at?(self, capture2)
+
+    # Allow moving twice if it's the first move
+    double_hop = [row + 2 * dir, col]
+    moves << double_hop if !board.anyone_at?(double_hop) && self.first_move
+    @moves = moves
   end
 end
 

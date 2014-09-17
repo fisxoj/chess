@@ -10,9 +10,10 @@ class Board
 
   def initialize
     @board = self.new_board
-    self.populate_board
 
-    self.initialize_moves
+    self.populate_board
+    p @board
+    # self.initialize_moves
     @touched_piece_moves = []
   end
 
@@ -41,7 +42,7 @@ class Board
   def format_char(char, pos, cursor_coords)
     if pos == cursor_coords
       char.bg_cyan
-    elsif touched_piece && touched_piece_moves[:lines].flatten(1).include?(pos)  #fix this fug mess
+    elsif touched_piece && touched_piece_moves.include?(pos)  #fix this fug mess
       if self[pos] && !touched_piece.same_color_as?(self[pos])
         char.bg_red
       else
@@ -61,6 +62,10 @@ class Board
 
   def opponent_at?(piece, coordinates)
     self[coordinates] && self[coordinates].color != piece.color
+  end
+
+  def anyone_at?(coordinates)
+    !self[coordinates].nil?
   end
 
   # def stepping_on_teammate?(from_coordinates, to_coordinates)
@@ -103,7 +108,7 @@ class Board
 
     @touched_piece = piece
     @touched_coordinates = coordinates
-    @touched_piece_moves = piece.moves ##fix
+    @touched_piece_moves = piece.moves(coordinates)
   end
 
   def place_at(coordinates)
@@ -111,14 +116,15 @@ class Board
 
     self[coordinates] = touched_piece
     self[touched_coordinates] = nil
-    touched_piece.calculate_moves(coordinates)
+    # touched_piece.calculate_moves(coordinates)
+    touched_piece.first_move = false
     @touched_piece_moves = []
     @touched_piece = nil
   end
 
   def [](coords)
     row, col = coords
-    board[row][col]
+    self.board[row][col]
   end
 
   def []=(coords, piece)
@@ -126,15 +132,15 @@ class Board
     board[row][col] = piece
   end
 
-  def initialize_moves
-    8.times do |x|
-      8.times do |y|
-        pos = [x, y]
-        piece = self[[x, y]]
-        piece.calculate_moves([x, y]) if piece
-      end
-    end
-  end
+  # def initialize_moves
+  #   8.times do |x|
+  #     8.times do |y|
+  #       pos = [x, y]
+  #       piece = self[[x, y]]
+  #       piece.calculate_moves([x, y]) if piece
+  #     end
+  #   end
+  # end
 
   def piece_color_at(coordinates)
     piece = self[coordinates]
