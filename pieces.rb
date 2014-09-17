@@ -43,7 +43,7 @@ class Piece
   end
 
   def valid_moves(coords)
-    moves = self.moves(coords)
+    moves = self.moves(coords) #|| [[]]
     piece_coordinates = self.coordinates
 
     moves.reject do |move|
@@ -80,7 +80,9 @@ class SlidingPiece < Piece
       7.times do |i|
         coords = [x + (i + 1) * dx, y + (i + 1) * dy]
 
-        break if !on_board?(coords) || board.teammate_at?(self, coords)
+        break if !on_board?(coords)
+
+        break if board.teammate_at?(self, coords)
 
         lines << coords
         # break if it was their guy
@@ -118,18 +120,18 @@ class Pawn < Piece
 
     # Disallow forward captures
     single_hop = [row + dir, col]
-    moves << single_hop unless board.anyone_at?(single_hop)
+    moves << single_hop if on_board?(single_hop) && !board.anyone_at?(single_hop)
 
     # Allow diagonal captures
     capture1 = [row + dir, col + dir]
-    moves << capture1 if board.opponent_at?(self, capture1)
+    moves << capture1 if on_board?(capture1) && board.opponent_at?(self, capture1)
 
     capture2 = [row + dir, col - dir]
-    moves << capture2 if board.opponent_at?(self, capture2)
+    moves << capture2 if on_board?(capture2) && board.opponent_at?(self, capture2)
 
     # Allow moving twice if it's the first move
     double_hop = [row + 2 * dir, col]
-    moves << double_hop if !board.anyone_at?(double_hop) && self.first_move
+    moves << double_hop if on_board?(double_hop) && self.first_move && !board.anyone_at?(double_hop)
 
     moves
   end

@@ -27,7 +27,7 @@ class Board
   end
 
   def anyone_at?(coordinates)
-    !self[coordinates].nil?
+    !((self[coordinates]).nil?)
   end
 
   def touch_piece_at(coordinates)
