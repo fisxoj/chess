@@ -19,8 +19,8 @@ class Piece
       :knight => '♞'}
       }
 
-  attr_reader :display_character, :deltas,
-              :color, :board
+  attr_reader :display_character, :deltas, :color, :board
+
   attr_accessor :first_move
 
   def initialize(color, board)

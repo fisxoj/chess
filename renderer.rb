@@ -45,4 +45,8 @@ module Renderer
     end
   end
 
+  def clear_screen
+    system('clear')
+  end
+
 end

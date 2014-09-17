@@ -19,11 +19,11 @@ class Board
   end
 
   def teammate_at?(piece, coordinates)
-    anyone_at?(coordinates) && self[coordinates].color == piece.color
+    anyone_at?(coordinates) && piece.same_color_as?(self[coordinates])
   end
 
   def opponent_at?(piece, coordinates)
-    anyone_at?(coordinates) && self[coordinates].color != piece.color
+    anyone_at?(coordinates) && !piece.same_color_as?(self[coordinates])
   end
 
   def anyone_at?(coordinates)
@@ -31,11 +31,9 @@ class Board
   end
 
   def touch_piece_at(coordinates)
-    piece = self[coordinates]
-
-    @touched_piece = piece
+    @touched_piece = self[coordinates]
     @touched_coordinates = coordinates
-    @touched_piece_moves = piece.valid_moves(coordinates)
+    @touched_piece_moves = self.touched_piece.valid_moves(coordinates)
   end
 
   def place_at(coordinates)
@@ -107,26 +105,6 @@ class Board
       pawns << Pawn.new(color, self)
     end
     pawns
-  end
-
-  def symbol_of(coords)
-    row, col = coords
-    row = 8 - row
-    col = ('a'.ord + col).chr
-    (col + row.to_s).to_sym
-  end                 #DELETE ME???
-
-  def coordinates_of(symbol)
-    char, number = symbol.to_s.split('')
-
-    number = 8 - Integer(number)
-    char = char.ord - 'a'.ord
-
-    [number, char]
-  end                                         #DELETE ME TOO???
-
-  def clear_screen
-    system('clear')
   end
 
   def coordinates_of(piece)
