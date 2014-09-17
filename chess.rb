@@ -8,7 +8,7 @@ class Game
   attr_reader :board, :cursor
 
   def initialize
-    @board = Board.new(self)
+    @board = Board.new
     @cursor = Cursor.new
     @turn = :white
     @picking = true
@@ -80,7 +80,7 @@ class Game
   def click
     coords = cursor.coordinates
 
-    if picking? && valid_piece_selection?(coords)
+    if picking? && board.valid_piece_selection?(coords, current_player)
       board.touch_piece_at(coords)
       @picking = false
     else
@@ -91,11 +91,6 @@ class Game
       end
     end
 
-  end
-
-  def valid_piece_selection?(coords)
-    board.piece_color_at(coords) == current_player &&
-    board[coords].has_valid_moves?(coords)
   end
 
   def save

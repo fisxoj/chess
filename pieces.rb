@@ -90,6 +90,65 @@ class SteppingPiece < Piece
 
     lines
   end
+
+end
+
+class King < SteppingPiece
+
+  def character(color)
+    color == :white ? '♔' : '♚'
+  end
+
+  def deltas
+    [[1, 1], [-1, -1], [1, -1], [-1, 1],
+     [1, 0], [0, 1], [-1, 0], [0, -1]]
+  end
+end
+
+class Queen < SlidingPiece
+
+  def character(color)
+    color == :white ? '♕' : '♛'
+  end
+
+  def deltas
+    [[1, 1], [-1, -1], [1, -1], [-1, 1],
+     [1, 0], [0, 1], [-1, 0], [0, -1]]
+  end
+end
+
+class Rook < SlidingPiece
+
+  def character(color)
+    color == :white ? '♖' : '♜'
+  end
+
+  def deltas
+    [[1, 0], [0, 1], [-1, 0], [0, -1]]
+  end
+end
+
+class Bishop < SlidingPiece
+
+  def character(color)
+    color == :white ? '♗' : '♝'
+  end
+
+  def deltas
+    [[1, 1], [-1, -1], [1, -1], [-1, 1]]
+  end
+end
+
+class Knight < SteppingPiece
+
+  def character(color)
+    color == :white ? '♘' : '♞'
+  end
+
+  def deltas
+    [[1, 2], [1, -2], [-1, 2], [-1, -2],
+     [2, 1], [2, -1], [-2, 1], [-2, -1]]
+  end
 end
 
 class Pawn < Piece
@@ -121,63 +180,5 @@ class Pawn < Piece
     moves << double_hop if self.first_move && !board.anyone_at?(double_hop)
 
     moves
-  end
-end
-
-class Rook < SlidingPiece
-
-  def character(color)
-    color == :white ? '♖' : '♜'
-  end
-
-  def deltas
-    [[1, 0], [0, 1], [-1, 0], [0, -1]]
-  end
-end
-
-class Bishop < SlidingPiece
-
-  def character(color)
-    color == :white ? '♗' : '♝'
-  end
-
-  def deltas
-    [[1, 1], [-1, -1], [1, -1], [-1, 1]]
-  end
-end
-
-class King < SteppingPiece
-
-  def character(color)
-    color == :white ? '♔' : '♚'
-  end
-
-  def deltas
-    [[1, 1], [-1, -1], [1, -1], [-1, 1],
-     [1, 0], [0, 1], [-1, 0], [0, -1]]
-  end
-end
-
-class Queen < SlidingPiece
-
-  def character(color)
-    color == :white ? '♕' : '♛'
-  end
-
-  def deltas
-    [[1, 1], [-1, -1], [1, -1], [-1, 1],
-     [1, 0], [0, 1], [-1, 0], [0, -1]]
-  end
-end
-
-class Knight < SteppingPiece
-
-  def character(color)
-    color == :white ? '♘' : '♞'
-  end
-
-  def deltas
-    [[1, 2], [1, -2], [-1, 2], [-1, -2],
-     [2, 1], [2, -1], [-2, 1], [-2, -1]]
   end
 end

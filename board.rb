@@ -10,13 +10,12 @@ class Board
 
   private
 
-  attr_reader :grid, :black_king, :white_king, :game
+  attr_reader :grid, :black_king, :white_king
 
 
   public
 
-  def initialize(game)
-    @game = game
+  def initialize
     @grid = Array.new(8) { Array.new(8) }
     populate_grid
     @touched_piece_moves = []
@@ -136,6 +135,11 @@ class Board
       all_moves << piece.valid_moves(piece.coordinates)
     end
     in_check?(color) && all_moves.flatten.empty?
+  end
+
+  def valid_piece_selection?(coords, current_player)
+    piece_color_at(coords) == current_player &&
+    self[coords].has_valid_moves?(coords)
   end
 
 
