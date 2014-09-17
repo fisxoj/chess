@@ -1,4 +1,6 @@
 # coding: utf-8
+require 'yaml'
+
 require_relative 'board'
 
 class Game
@@ -57,13 +59,15 @@ class Game
       if picking? && board.piece_color_at(cursor.coordinates) == current_player
         board.touch_piece_at(coords)
         @picking = false
-      else
-        board.place_at(coords)
+      elsif board.place_at(coords)
         @picking = true
         next_turn
       end
     when 'q'
+      self.save
       exit
+    when 'l'
+      self.load
     end
   end
 
@@ -93,6 +97,14 @@ class Game
 
   def click
     cursor.coordinates
+  end
+
+  def save
+    File.write('.chess_save', self.to_yaml)
+  end
+
+  def load
+    YAML.load(File.read('.chess_save')).run
   end
 
 

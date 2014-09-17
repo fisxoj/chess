@@ -1,0 +1,204 @@
+--- !ruby/object:Game
+board: &1 !ruby/object:Board
+  board:
+  - - !ruby/object:Rook
+      board: *1
+      color: :black
+      display_character: "♜"
+      first_move: true
+    - !ruby/object:Knight
+      board: *1
+      color: :black
+      display_character: "♞"
+      first_move: true
+    - !ruby/object:Bishop
+      board: *1
+      color: :black
+      display_character: "♝"
+      first_move: true
+    - !ruby/object:Queen
+      board: *1
+      color: :black
+      display_character: "♛"
+      first_move: true
+    - !ruby/object:King
+      board: *1
+      color: :black
+      display_character: "♚"
+      first_move: true
+    - !ruby/object:Bishop
+      board: *1
+      color: :black
+      display_character: "♝"
+      first_move: true
+    - !ruby/object:Knight
+      board: *1
+      color: :black
+      display_character: "♞"
+      first_move: true
+    - !ruby/object:Rook
+      board: *1
+      color: :black
+      display_character: "♜"
+      first_move: true
+  - - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+    - 
+    - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :black
+      display_character: "♟"
+      first_move: true
+  - - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - - 
+    - 
+    - 
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: false
+      moves:
+      - - 3
+        - 3
+    - 
+    - 
+    - 
+    - 
+  - - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+    - 
+  - - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+    - 
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+    - !ruby/object:Pawn
+      board: *1
+      color: :white
+      display_character: "♙"
+      first_move: true
+  - - !ruby/object:Rook
+      board: *1
+      color: :white
+      display_character: "♖"
+      first_move: true
+    - !ruby/object:Knight
+      board: *1
+      color: :white
+      display_character: "♘"
+      first_move: true
+    - !ruby/object:Bishop
+      board: *1
+      color: :white
+      display_character: "♗"
+      first_move: true
+    - !ruby/object:Queen
+      board: *1
+      color: :white
+      display_character: "♕"
+      first_move: true
+    - !ruby/object:King
+      board: *1
+      color: :white
+      display_character: "♔"
+      first_move: true
+    - !ruby/object:Bishop
+      board: *1
+      color: :white
+      display_character: "♗"
+      first_move: true
+    - !ruby/object:Knight
+      board: *1
+      color: :white
+      display_character: "♘"
+      first_move: true
+    - !ruby/object:Rook
+      board: *1
+      color: :white
+      display_character: "♖"
+      first_move: true
+  touched_piece_moves: []
+  touched_piece: 
+  touched_coordinates:
+  - 4
+  - 3
+cursor: !ruby/object:Cursor
+  row: 3
+  col: 3
+turn: :black
+picking: true

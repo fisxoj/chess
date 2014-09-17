@@ -112,14 +112,17 @@ class Board
   end
 
   def place_at(coordinates)
-    # Check for validity
-
-    self[coordinates] = touched_piece
-    self[touched_coordinates] = nil
-    # touched_piece.calculate_moves(coordinates)
-    touched_piece.first_move = false
-    @touched_piece_moves = []
-    @touched_piece = nil
+    if touched_piece_moves.include?(coordinates)
+      self[coordinates] = touched_piece
+      self[touched_coordinates] = nil
+      # touched_piece.calculate_moves(coordinates)
+      touched_piece.first_move = false
+      @touched_piece_moves = []
+      @touched_piece = nil
+      true
+    else
+      false
+    end
   end
 
   def [](coords)
