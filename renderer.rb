@@ -30,19 +30,27 @@ module Renderer
   def format_char(char, pos, cursor_coords)
     if pos == cursor_coords
       char.bg_cyan
-    elsif touched_piece && touched_piece_moves.include?(pos)  #fix this fug mess
-      if self[pos] && !touched_piece.same_color_as?(self[pos])
-        char.bg_red
-      elsif pos.reduce(:+).odd?
-        GREEN_DOT.bg_gray
-      else
-        GREEN_DOT
-      end
-    elsif pos.reduce(:+).odd?
+    elsif touched_piece_moves.include?(pos)
+      format_available_move(char, pos)
+    elsif black_square?(pos)
       char.bg_gray
     else
       char
     end
+  end
+
+  def format_available_move(char, pos)
+    if self.opponent_at?(touched_piece, pos)
+      char.bg_red
+    elsif black_square?(pos)
+      GREEN_DOT.bg_gray
+    else
+      GREEN_DOT
+    end
+  end
+
+  def black_square?(pos)
+    pos.reduce(:+).odd?
   end
 
   def clear_screen
