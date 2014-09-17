@@ -74,7 +74,7 @@ class Board
 
     @touched_piece = piece
     @touched_coordinates = coordinates
-    @touched_piece_moves = piece.moves(coordinates)
+    @touched_piece_moves = piece.valid_moves(coordinates)
   end
 
   def place_at(coordinates)
@@ -112,9 +112,20 @@ class Board
     "A board."
   end
 
-  def each_piece(&prc)
-    self.board.flatten.compact.each(&prc)
-  end                 #DELETE ME??
+  def each_piece(color = nil, &prc)
+    self.board.flatten.compact.select do |piece|
+      color.nil? || piece.color == color
+    end.each(&prc)
+  end
+
+  def each_coordinate(&prc)
+    8.times do |i|
+      8.times do |j|
+        prc.call([i, j])
+      end
+    end
+    nil
+  end
 
   def new_board
     Array.new(8) { Array.new(8) }
@@ -168,21 +179,16 @@ class Board
     nil
   end
 
-  def each_coordinate(&prc)
-    8.times do |i|
-      8.times do |j|
-        prc.call([i, j])
-      end
-    end
-    nil
-  end
-
   def in_check?(color)
     all_moves = []
 
     king = (color == :white ? self.white_king : self.black_king)
+    other_color = (color == :white ? :black : :white)
 
-    each_piece { |piece| all_moves << piece.moves(coordinates_of(piece)) }
+    each_piece(other_color) do |piece|
+      all_moves << piece.moves(coordinates_of(piece))
+    end
+
     all_moves.flatten(1).include?(coordinates_of(king))
   end
 
@@ -194,12 +200,19 @@ class Board
     end
   end
 
-  def dup
+  def leaves_king_in_check?(from_pos, to_pos, player_color)
+    self.swap_positions(from_pos, to_pos)
 
+    result = self.in_check?(player_color)
+
+    self.swap_positions(from_pos, to_pos)
+
+    result
   end
 
-
-
+  def swap_positions(from_pos, to_pos)
+    self[from_pos], self[to_pos] = self[to_pos], self[from_pos]
+  end
 end
 
 class String
