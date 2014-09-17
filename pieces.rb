@@ -42,12 +42,12 @@ class Piece
     PIECE_CHARACTERS[color][self.class.to_s.downcase.to_sym]
   end
 
-  def valid_moves(pos)
-    moves = self.moves(pos)
-    piece_position = self.coordinates
+  def valid_moves(coords)
+    moves = self.moves(coords)
+    piece_coordinates = self.coordinates
 
     moves.reject do |move|
-      board.leaves_king_in_check?(piece_position, move, self.color)
+      board.leaves_king_in_check?(piece_coordinates, move, self.color)
     end
   end
 
@@ -55,8 +55,8 @@ class Piece
     board.coordinates_of(self)
   end
 
-  def on_board?(pos)
-    pos.all? { |num| num.between?(0, 7) }
+  def on_board?(coords)
+    coords.all? { |num| num.between?(0, 7) }
   end
 
   def owned_by?(test_color)
@@ -70,21 +70,21 @@ class Piece
 end
 
 class SlidingPiece < Piece
-  def moves(position)
-    x, y = position
+  def moves(coordinates)
+    x, y = coordinates
 
     lines = []
     self.deltas.each do |dx, dy|
       one_line = []
 
       7.times do |i|
-        pos = [x + (i + 1) * dx, y + (i + 1) * dy]
+        coords = [x + (i + 1) * dx, y + (i + 1) * dy]
 
-        break if !on_board?(pos) || board.teammate_at?(self, pos)
+        break if !on_board?(coords) || board.teammate_at?(self, coords)
 
-        lines << pos
+        lines << coords
         # break if it was their guy
-        break if board.opponent_at?(self, pos)
+        break if board.opponent_at?(self, coords)
       end
 
       # lines << one_line
@@ -96,14 +96,14 @@ class SlidingPiece < Piece
 end
 
 class SteppingPiece < Piece
-  def moves(position)
-    x, y = position
+  def moves(coordinates)
+    x, y = coordinates
     lines = []
 
     deltas.each do |dx, dy|
-      pos = [x + dx, y + dy]
+      coords = [x + dx, y + dy]
 
-      lines << pos if on_board?(pos) && !board.teammate_at?(self, pos)
+      lines << coords if on_board?(coords) && !board.teammate_at?(self, coords)
     end
 
     lines
@@ -111,8 +111,8 @@ class SteppingPiece < Piece
 end
 
 class Pawn < Piece
-  def moves(position)
-    row, col = position
+  def moves(coordinates)
+    row, col = coordinates
     dir = (self.color == :white ? -1 : 1)
     moves = []
 

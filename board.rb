@@ -11,7 +11,7 @@ class Board
 
   def initialize(game)
     @game = game
-    @board = self.new_board
+    @board = Array.new(8) { Array.new(8) }
     self.populate_board
     @touched_piece_moves = []
     @black_king = find_king(:black)
@@ -19,11 +19,11 @@ class Board
   end
 
   def teammate_at?(piece, coordinates)
-    self[coordinates] && self[coordinates].color == piece.color
+    anyone_at?(coordinates) && self[coordinates].color == piece.color
   end
 
   def opponent_at?(piece, coordinates)
-    self[coordinates] && self[coordinates].color != piece.color
+    anyone_at?(coordinates) && self[coordinates].color != piece.color
   end
 
   def anyone_at?(coordinates)
@@ -86,10 +86,6 @@ class Board
       end
     end
     nil
-  end
-
-  def new_board
-    Array.new(8) { Array.new(8) }
   end
 
   def populate_board
