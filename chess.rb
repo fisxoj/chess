@@ -5,7 +5,7 @@ require_relative 'board'
 
 class Game
 
-  attr_reader :board, :cursor, :turn
+  attr_reader :board, :cursor
 
 
 
@@ -29,7 +29,7 @@ class Game
   # end
 
   def current_player
-    self.turn
+    @turn
   end
 
   def next_turn
@@ -37,10 +37,14 @@ class Game
   end
 
   def run
-    loop do
+    until board.checkmate?(self.current_player)
       board.render(cursor.coordinates)
       handle_input(get_char)
     end
+    board.render([-1, -1])
+    next_turn
+    puts "Checkmate!"
+    puts "#{self.current_player.to_s.capitalize} wins!!!"
   end
 
   def handle_input(char)

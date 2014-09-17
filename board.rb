@@ -179,6 +179,22 @@ class Board
     nil
   end
 
+  def find_king(color)
+    self.each_piece do |piece|
+      if piece.class == King && piece.color == color
+        return piece
+      end
+    end
+  end
+
+  def checkmate?(color)
+    all_moves = []
+    each_piece(color) do |piece|
+      all_moves << piece.valid_moves(piece.coordinates)
+    end
+    all_moves.flatten.empty?
+  end
+
   def in_check?(color)
     all_moves = []
 
@@ -190,14 +206,6 @@ class Board
     end
 
     all_moves.flatten(1).include?(coordinates_of(king))
-  end
-
-  def find_king(color)
-    self.each_piece do |piece|
-      if piece.class == King && piece.color == color
-        return piece
-      end
-    end
   end
 
   def leaves_king_in_check?(from_pos, to_pos, player_color)

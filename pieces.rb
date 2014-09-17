@@ -44,15 +44,14 @@ class Piece
 
   def valid_moves(pos)
     moves = self.moves(pos)
-    piece_position = self.position
+    piece_position = self.coordinates
 
     moves.reject do |move|
-      p [move, board.leaves_king_in_check?(piece_position, move, self.color)]
       board.leaves_king_in_check?(piece_position, move, self.color)
     end
   end
 
-  def position
+  def coordinates
     board.coordinates_of(self)
   end
 
