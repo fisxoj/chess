@@ -18,14 +18,6 @@ class Game
     @picking
   end
 
-  # def move
-  #
-  #   turn = turns.next
-  #   board.move(self.get_move)
-  #
-  #
-  # end
-
   def current_player
     @turn
   end

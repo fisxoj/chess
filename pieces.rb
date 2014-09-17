@@ -2,25 +2,6 @@
 
 class Piece
 
-  PIECE_CHARACTERS = {
-    :white => {
-      :pawn => '♙',
-      :king => '♔',
-      :queen => '♕',
-      :rook => '♖',
-      :bishop => '♗',
-      :knight => '♘'
-    },
-    :black => {
-      :pawn => '♟',
-      :king => '♚',
-      :queen => '♛',
-      :rook => '♜',
-      :bishop => '♝',
-      :knight => '♞'
-    }
-  }
-
   attr_reader :display_character, :deltas, :color, :board
 
   attr_accessor :first_move
@@ -38,10 +19,6 @@ class Piece
 
   def inspect
     @display_character
-  end
-
-  def character(color)
-    PIECE_CHARACTERS[color][self.class.to_s.downcase.to_sym]
   end
 
   def valid_moves(coords)
@@ -119,6 +96,11 @@ class SteppingPiece < Piece
 end
 
 class Pawn < Piece
+
+  def character(color)
+    color == :white ? '♙' : '♟'
+  end
+
   def moves(coordinates)
     row, col = coordinates
     dir = (self.color == :white ? -1 : 1)
@@ -144,18 +126,33 @@ class Pawn < Piece
 end
 
 class Rook < SlidingPiece
+
+  def character(color)
+    color == :white ? '♖' : '♜'
+  end
+
   def deltas
     [[1, 0], [0, 1], [-1, 0], [0, -1]]
   end
 end
 
 class Bishop < SlidingPiece
+
+  def character(color)
+    color == :white ? '♗' : '♝'
+  end
+
   def deltas
     [[1, 1], [-1, -1], [1, -1], [-1, 1]]
   end
 end
 
 class King < SteppingPiece
+
+  def character(color)
+    color == :white ? '♔' : '♚'
+  end
+
   def deltas
     [[1, 1], [-1, -1], [1, -1], [-1, 1],
      [1, 0], [0, 1], [-1, 0], [0, -1]]
@@ -163,6 +160,11 @@ class King < SteppingPiece
 end
 
 class Queen < SlidingPiece
+
+  def character(color)
+    color == :white ? '♕' : '♛'
+  end
+
   def deltas
     [[1, 1], [-1, -1], [1, -1], [-1, 1],
      [1, 0], [0, 1], [-1, 0], [0, -1]]
@@ -170,6 +172,11 @@ class Queen < SlidingPiece
 end
 
 class Knight < SteppingPiece
+
+  def character(color)
+    color == :white ? '♘' : '♞'
+  end
+
   def deltas
     [[1, 2], [1, -2], [-1, 2], [-1, -2],
      [2, 1], [2, -1], [-2, 1], [-2, -1]]

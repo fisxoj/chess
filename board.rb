@@ -127,7 +127,7 @@ class Board
     each_piece(color) do |piece|
       all_moves << piece.valid_moves(piece.coordinates)
     end
-    all_moves.flatten.empty?
+    in_check?(color) && all_moves.flatten.empty?
   end
 
   def in_check?(color)
