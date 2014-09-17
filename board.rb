@@ -27,7 +27,7 @@ class Board
   end
 
   def anyone_at?(coordinates)
-    !((self[coordinates]).nil?)
+    coordinates.all? {|coord| coord.between?(0, 7) } && !((self[coordinates]).nil?)
   end
 
   def touch_piece_at(coordinates)
@@ -144,17 +144,20 @@ class Board
   end
 
   def leaves_king_in_check?(from_pos, to_pos, player_color)
-    self.swap_positions(from_pos, to_pos)
+    # We need to imagine a board where the move has happened
+    # and a piece may have been captured and removed
+    # Then, switch back
+
+    temp = self[to_pos]
+    self[to_pos] = self[from_pos]
+    self[from_pos] = nil
 
     result = self.in_check?(player_color)
 
-    self.swap_positions(from_pos, to_pos)
+    self[from_pos] = self[to_pos]
+    self[to_pos] = temp
 
     result
-  end
-
-  def swap_positions(from_pos, to_pos)
-    self[from_pos], self[to_pos] = self[to_pos], self[from_pos]
   end
 end
 

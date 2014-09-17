@@ -9,15 +9,17 @@ class Piece
       :queen => '♕',
       :rook => '♖',
       :bishop => '♗',
-      :knight => '♘'},
+      :knight => '♘'
+    },
     :black => {
       :pawn => '♟',
       :king => '♚',
       :queen => '♛',
       :rook => '♜',
       :bishop => '♝',
-      :knight => '♞'}
-      }
+      :knight => '♞'
+    }
+  }
 
   attr_reader :display_character, :deltas, :color, :board
 
@@ -49,6 +51,10 @@ class Piece
     moves.reject do |move|
       board.leaves_king_in_check?(piece_coordinates, move, self.color)
     end
+  end
+
+  def has_valid_moves?(coords)
+    !valid_moves(coords).flatten.empty?
   end
 
   def coordinates

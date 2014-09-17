@@ -7,8 +7,6 @@ class Game
 
   attr_reader :board, :cursor
 
-
-
   def initialize
     @board = Board.new(self)
     @cursor = Cursor.new
@@ -58,15 +56,7 @@ class Game
     when 'd'
       cursor.right
     when "\r"
-      coords = self.click
-
-      if picking? && board.piece_color_at(cursor.coordinates) == current_player
-        board.touch_piece_at(coords)
-        @picking = false
-      elsif board.place_at(coords)
-        @picking = true
-        next_turn
-      end
+      self.click
     when 'q'
       self.save
       exit
@@ -89,8 +79,23 @@ class Game
   end
 
   def click
-    cursor.coordinates
+    coords = cursor.coordinates
+
+    if valid_piece_selection?(coords)
+      board.touch_piece_at(coords)
+      @picking = false
+    elsif board.place_at(coords)
+      @picking = true
+      next_turn
+    end
   end
+
+  def valid_piece_selection?(coords)
+    picking? &&
+    board.piece_color_at(coords) == current_player &&
+    board[coords].has_valid_moves?(coords)
+  end
+
 
   def save
     File.write('.chess_save', self.to_yaml)
