@@ -113,11 +113,10 @@ class Pawn < Piece
 
     # Disallow forward captures
     single_hop = [row + dir, col]
-    moves << single_hop unless board.anyone_at(single_hop)
+    moves << single_hop unless board.anyone_at?(single_hop)
 
     # Allow diagonal captures
     capture1 = [row + dir, col + dir]
-    p board.opponent_at?(self, capture1)
     moves << capture1 if board.opponent_at?(self, capture1)
 
     capture2 = [row + dir, col - dir]

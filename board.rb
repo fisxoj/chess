@@ -6,15 +6,16 @@ class Board
 
   attr_accessor :board
   attr_reader :cursor, :touched_piece, :touched_coordinates,
-              :touched_piece_moves
+              :touched_piece_moves, :game, :black_king, :white_king
 
-  def initialize
+  def initialize(game)
+    @game = game
     @board = self.new_board
 
     self.populate_board
-    p @board
-    # self.initialize_moves
     @touched_piece_moves = []
+    @black_king = find_king(:black)
+    @white_king = find_king(:white)
   end
 
   def render(cursor_coords)
@@ -36,7 +37,8 @@ class Board
       rows << cols.join('')
     end
     puts rows.join("\n")
-    #puts touched_piece
+    p in_check?(:white)
+    p in_check?(:black)
   end
 
   def format_char(char, pos, cursor_coords)
@@ -56,7 +58,6 @@ class Board
   end
 
   def teammate_at?(piece, coordinates)
-   # p coordinates
     self[coordinates] && self[coordinates].color == piece.color
   end
 
@@ -67,41 +68,6 @@ class Board
   def anyone_at?(coordinates)
     !self[coordinates].nil?
   end
-
-  # def stepping_on_teammate?(from_coordinates, to_coordinates)
-#     self[from_coordinates].same_color_as?(self[to_coordinates])
-#   rescue NoMethodError
-#     false
-#   end
-#
-#   def stepping_on_opponent?(from_coordinates, to_coordinates)
-#     !self[from_coordinates].same_color_as?(self[to_coordinates])
-#   rescue NoMethodError
-#     false
-#   end
-#
-#   def valid_moves(piece)
-#     piece.moves[:lines].map do |line|
-#       stop = false
-#       p line
-#       line.take_while do |coords|
-#         break if stop
-#
-#         p coords
-#         other_piece = self[coords]
-#
-#         return true unless other_piece
-#
-#         if piece.same_color_as?(self[coords]) #stepping_on_teammate?
-#           false
-#         else
-#           stop = true
-#           true
-#         end
-#
-#       end
-#     end
-#   end
 
   def touch_piece_at(coordinates)
     piece = self[coordinates]
@@ -115,7 +81,6 @@ class Board
     if touched_piece_moves.include?(coordinates)
       self[coordinates] = touched_piece
       self[touched_coordinates] = nil
-      # touched_piece.calculate_moves(coordinates)
       touched_piece.first_move = false
       @touched_piece_moves = []
       @touched_piece = nil
@@ -134,16 +99,6 @@ class Board
     row, col = coords
     board[row][col] = piece
   end
-
-  # def initialize_moves
-  #   8.times do |x|
-  #     8.times do |y|
-  #       pos = [x, y]
-  #       piece = self[[x, y]]
-  #       piece.calculate_moves([x, y]) if piece
-  #     end
-  #   end
-  # end
 
   def piece_color_at(coordinates)
     piece = self[coordinates]
@@ -200,11 +155,50 @@ class Board
     char = char.ord - 'a'.ord
 
     [number, char]
-  end            #DELETE ME TOO???
+  end                                         #DELETE ME TOO???
 
   def clear_screen
     system('clear')
   end
+
+  def coordinates_of(piece)
+    each_coordinate do |coordinate|
+      return coordinate if self[coordinate] == piece
+    end
+    nil
+  end
+
+  def each_coordinate(&prc)
+    8.times do |i|
+      8.times do |j|
+        prc.call([i, j])
+      end
+    end
+    nil
+  end
+
+  def in_check?(color)
+    all_moves = []
+
+    king = (color == :white ? self.white_king : self.black_king)
+
+    each_piece { |piece| all_moves << piece.moves(coordinates_of(piece)) }
+    all_moves.flatten(1).include?(coordinates_of(king))
+  end
+
+  def find_king(color)
+    self.each_piece do |piece|
+      if piece.class == King && piece.color == color
+        return piece
+      end
+    end
+  end
+
+  def dup
+
+  end
+
+
 
 end
 

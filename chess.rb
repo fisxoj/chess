@@ -10,7 +10,7 @@ class Game
 
 
   def initialize
-    @board = Board.new
+    @board = Board.new(self)
     @cursor = Cursor.new
     @turn = :white
     @picking = true
@@ -83,17 +83,6 @@ class Game
       system("stty -raw echo")
     end
   end
-
-  # def get_player_move
-  #   while []
-  #     board.render
-  #
-  #     ret = handle_input(get_char)
-  #     break if ret.is_a?(Array)
-  #   end
-  #
-  #
-  # end
 
   def click
     cursor.coordinates
