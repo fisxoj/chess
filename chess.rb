@@ -1,7 +1,7 @@
 # coding: utf-8
 require 'yaml'
-
 require_relative 'board'
+require_relative 'cursor'
 
 class Game
 
@@ -14,24 +14,31 @@ class Game
     @picking = true
   end
 
-  def picking?
-    @picking
+  def run
+    until board.checkmate?(self.current_player)
+      board.render(cursor.coordinates)
+      handle_input(get_char)
+    end
+
+    display_endgame
   end
 
   def current_player
     @turn
   end
 
+  private
+
+  def picking?
+    @picking
+  end
+
   def next_turn
     @turn = @turn == :white ? :black : :white
   end
 
-  def run
-    until board.checkmate?(self.current_player)
-      board.render(cursor.coordinates)
-      handle_input(get_char)
-    end
-    board.render([-1, -1])
+  def display_endgame
+    board.render([-1, -1]) # Moves cursor offscreen
     next_turn
     puts "Checkmate!"
     puts "#{self.current_player.to_s.capitalize} wins!!!"
@@ -48,12 +55,12 @@ class Game
     when 'd'
       cursor.right
     when "\r"
-      self.click
+      click
     when 'q'
-      self.save
+      save
       exit
     when 'l'
-      self.load
+      load
     end
   end
 
@@ -73,21 +80,23 @@ class Game
   def click
     coords = cursor.coordinates
 
-    if valid_piece_selection?(coords)
+    if picking? && valid_piece_selection?(coords)
       board.touch_piece_at(coords)
       @picking = false
-    elsif board.place_at(coords)
-      @picking = true
-      next_turn
+    else
+      piece_dropped = board.place_at(coords)
+      if piece_dropped
+        @picking = true
+        next_turn
+      end
     end
+
   end
 
   def valid_piece_selection?(coords)
-    picking? &&
     board.piece_color_at(coords) == current_player &&
     board[coords].has_valid_moves?(coords)
   end
-
 
   def save
     File.write('.chess_save', self.to_yaml)
@@ -95,43 +104,6 @@ class Game
 
   def load
     YAML.load(File.read('.chess_save')).run
-  end
-
-
-end
-
-class Cursor
-  SIZE = 8
-
-  attr_reader :row, :col
-
-  def initialize
-    @row = 0
-    @col = 0
-  end
-
-  def left
-    @col = (col - 1) % SIZE
-    nil
-  end
-
-  def right
-    @col = (col + 1) % SIZE
-    nil
-  end
-
-  def up
-    @row = (row - 1) % SIZE
-    nil
-  end
-
-  def down
-    @row = (row + 1) % SIZE
-    nil
-  end
-
-  def coordinates
-    [row, col]
   end
 
 end
