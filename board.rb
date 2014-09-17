@@ -1,8 +1,9 @@
-# coding: utf-8
-
 require_relative 'pieces'
+require_relative 'renderer'
 
 class Board
+
+  include Renderer
 
   attr_accessor :board
   attr_reader :cursor, :touched_piece, :touched_coordinates,
@@ -11,50 +12,10 @@ class Board
   def initialize(game)
     @game = game
     @board = self.new_board
-
     self.populate_board
     @touched_piece_moves = []
     @black_king = find_king(:black)
     @white_king = find_king(:white)
-  end
-
-  def render(cursor_coords)
-
-    clear_screen
-
-    rows = []
-    8.times do |row|
-
-      cols = []
-      8.times do |col|
-        raw_char = (self[[row, col]] || ' ').to_s
-
-        formatted_char = format_char(raw_char, [row, col], cursor_coords)
-
-        cols << formatted_char
-      end
-
-      rows << cols.join('')
-    end
-    puts rows.join("\n")
-    p in_check?(:white)
-    p in_check?(:black)
-  end
-
-  def format_char(char, pos, cursor_coords)
-    if pos == cursor_coords
-      char.bg_cyan
-    elsif touched_piece && touched_piece_moves.include?(pos)  #fix this fug mess
-      if self[pos] && !touched_piece.same_color_as?(self[pos])
-        char.bg_red
-      else
-        char.bg_green
-      end
-    elsif pos.reduce(:+).odd?
-      char.bg_gray
-    else
-      char
-    end
   end
 
   def teammate_at?(piece, coordinates)
@@ -223,23 +184,3 @@ class Board
   end
 end
 
-class String
-  def black;          "\033[30m#{self}\033[0m" end
-  def red;            "\033[31m#{self}\033[0m" end
-  def green;          "\033[32m#{self}\033[0m" end
-  def brown;          "\033[33m#{self}\033[0m" end
-  def blue;           "\033[34m#{self}\033[0m" end
-  def magenta;        "\033[35m#{self}\033[0m" end
-  def cyan;           "\033[36m#{self}\033[0m" end
-  def gray;           "\033[37m#{self}\033[0m" end
-  def bg_black;       "\033[40m#{self}\033[0m" end
-  def bg_red;         "\033[41m#{self}\033[0m" end
-  def bg_green;       "\033[42m#{self}\033[0m" end
-  def bg_brown;       "\033[43m#{self}\033[0m" end
-  def bg_blue;        "\033[44m#{self}\033[0m" end
-  def bg_magenta;     "\033[45m#{self}\033[0m" end
-  def bg_cyan;        "\033[46m#{self}\033[0m" end
-  def bg_gray;        "\033[47m#{self}\033[0m" end
-  def bold;           "\033[1m#{self}\033[22m" end
-  def reverse_color;  "\033[7m#{self}\033[27m" end
-end

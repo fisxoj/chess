@@ -48,7 +48,7 @@ class Game
   end
 
   def handle_input(char)
-    case char
+    case char.downcase
     when 'w'
       cursor.up
     when 'a'
