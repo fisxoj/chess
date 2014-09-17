@@ -27,7 +27,8 @@ class Board
   end
 
   def anyone_at?(coordinates)
-    coordinates.all? {|coord| coord.between?(0, 7) } && !((self[coordinates]).nil?)
+    coordinates.all? { |coord| coord.between?(0, 7) } &&
+    !self[coordinates].nil?
   end
 
   def touch_piece_at(coordinates)
